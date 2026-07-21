@@ -6,6 +6,7 @@
 
 - 默认输出换行符、单词和字节数量；
 - 支持 `-l`、`-w`、`-c` 以及组合选项；
+- 支持同时统计多个文件并输出合计；
 - 支持从标准输入读取内容；
 - 使用流式处理，不需要将整个文件载入内存。
 
@@ -21,7 +22,7 @@ cmake --build build
 ## 使用
 
 ```text
-c-text-stats [OPTION]... FILE
+c-text-stats [OPTION]... FILE...
 ```
 
 示例：
@@ -30,6 +31,7 @@ c-text-stats [OPTION]... FILE
 c-text-stats README.md
 c-text-stats -l README.md
 c-text-stats -wc README.md
+c-text-stats README.md LICENSE
 printf "hello world\n" | c-text-stats -
 ```
 
