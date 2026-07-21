@@ -74,13 +74,9 @@ set_tests_properties(cli_help
 
 add_test(
     NAME cli_continues_after_error
-    COMMAND c-text-stats
-        ${CMAKE_CURRENT_BINARY_DIR}/missing-input.txt
-        ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
-)
-
-set_tests_properties(cli_continues_after_error
-    PROPERTIES
-        WILL_FAIL TRUE
-        PASS_REGULAR_EXPRESSION "LICENSE"
+    COMMAND ${CMAKE_COMMAND}
+        -DCLI=$<TARGET_FILE:c-text-stats>
+        -DMISSING_FILE=${CMAKE_CURRENT_BINARY_DIR}/missing-input.txt
+        -DVALID_FILE=${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_continues_after_error.cmake
 )
