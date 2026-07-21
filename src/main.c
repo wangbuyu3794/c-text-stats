@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef TEXT_STATS_VERSION
+#define TEXT_STATS_VERSION "unknown"
+#endif
+
 typedef struct {
     int show_lines;
     int show_words;
@@ -16,11 +20,12 @@ static void print_usage(FILE *stream, const char *program_name)
     fprintf(stream,
             "Usage: %s [OPTION]... FILE...\n"
             "Count lines, words, and bytes in each FILE.\n\n"
-            "  -l    print the newline count\n"
-            "  -w    print the word count\n"
-            "  -c    print the byte count\n"
-            "  -h    display this help and exit\n"
-            "  -     read from standard input\n",
+            "  -l, --lines    print the newline count\n"
+            "  -w, --words    print the word count\n"
+            "  -c, --bytes    print the byte count\n"
+            "  -h, --help     display this help and exit\n"
+            "      --version  display version information and exit\n"
+            "  -               read from standard input\n",
             program_name);
 }
 
@@ -41,6 +46,24 @@ static int enable_option(Options *options, char option)
     }
 }
 
+static int enable_long_option(Options *options, const char *option)
+{
+    if (strcmp(option, "--lines") == 0) {
+        options->show_lines = 1;
+        return 0;
+    }
+    if (strcmp(option, "--words") == 0) {
+        options->show_words = 1;
+        return 0;
+    }
+    if (strcmp(option, "--bytes") == 0) {
+        options->show_bytes = 1;
+        return 0;
+    }
+
+    return -1;
+}
+
 static int parse_options(int argc, char **argv, Options *options)
 {
     int index;
@@ -59,6 +82,21 @@ static int parse_options(int argc, char **argv, Options *options)
         if (strcmp(argument, "-h") == 0
             || strcmp(argument, "--help") == 0) {
             return 1;
+        }
+
+        if (strcmp(argument, "--version") == 0) {
+            return 2;
+        }
+
+        if (argument[0] == '-' && argument[1] == '-') {
+            if (enable_long_option(options, argument) != 0) {
+                fprintf(stderr,
+                        "%s: invalid option -- '%s'\n",
+                        argv[0],
+                        argument);
+                return -1;
+            }
+            continue;
         }
 
         if (argument[0] == '-' && argument[1] != '\0') {
@@ -167,6 +205,11 @@ int main(int argc, char **argv)
     int parse_result = parse_options(argc, argv, &options);
 
     if (parse_result > 0) {
+        if (parse_result == 2) {
+            printf("c-text-stats %s\n", TEXT_STATS_VERSION);
+            return 0;
+        }
+
         print_usage(stdout, argv[0]);
         return 0;
     }

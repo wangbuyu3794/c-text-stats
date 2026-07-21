@@ -5,7 +5,7 @@
 ## 功能
 
 - 默认输出换行符、单词和字节数量；
-- 支持 `-l`、`-w`、`-c` 以及组合选项；
+- 支持短选项、组合短选项和对应的长选项；
 - 支持同时统计多个文件并输出合计；
 - 支持从标准输入读取内容；
 - 使用流式处理，不需要将整个文件载入内存。
@@ -31,7 +31,9 @@ c-text-stats [OPTION]... FILE...
 c-text-stats README.md
 c-text-stats -l README.md
 c-text-stats -wc README.md
+c-text-stats --lines --words README.md
 c-text-stats README.md LICENSE
+c-text-stats --version
 printf "hello world\n" | c-text-stats -
 ```
 
