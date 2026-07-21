@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(c_text_stats
-    VERSION 1.1.0
+    VERSION 1.2.0
     DESCRIPTION "A small command-line text statistics tool"
     LANGUAGES C
 )
@@ -41,6 +41,10 @@ add_executable(c-text-stats
 )
 
 target_link_libraries(c-text-stats PRIVATE text_stats_core)
+target_compile_definitions(c-text-stats
+    PRIVATE
+        TEXT_STATS_VERSION="${PROJECT_VERSION}"
+)
 enable_strict_warnings(c-text-stats)
 
 add_executable(test_text_stats
@@ -70,6 +74,27 @@ add_test(NAME cli_help COMMAND c-text-stats --help)
 set_tests_properties(cli_help
     PROPERTIES
         PASS_REGULAR_EXPRESSION "Usage:"
+)
+
+add_test(NAME cli_version COMMAND c-text-stats --version)
+
+set_tests_properties(cli_version
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}"
+)
+
+add_test(
+    NAME cli_long_options
+    COMMAND c-text-stats
+        --lines
+        --words
+        ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+        ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+)
+
+set_tests_properties(cli_long_options
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION "total"
 )
 
 add_test(
