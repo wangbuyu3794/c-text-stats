@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(c_text_stats
-    VERSION 1.0.0
+    VERSION 1.1.0
     DESCRIPTION "A small command-line text statistics tool"
     LANGUAGES C
 )
@@ -52,3 +52,31 @@ enable_strict_warnings(test_text_stats)
 
 enable_testing()
 add_test(NAME text_stats_tests COMMAND test_text_stats)
+
+add_test(
+    NAME cli_multiple_files
+    COMMAND c-text-stats
+        ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+        ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+)
+
+set_tests_properties(cli_multiple_files
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION "total"
+)
+
+add_test(NAME cli_help COMMAND c-text-stats --help)
+
+set_tests_properties(cli_help
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION "Usage:"
+)
+
+add_test(
+    NAME cli_continues_after_error
+    COMMAND ${CMAKE_COMMAND}
+        -DCLI=$<TARGET_FILE:c-text-stats>
+        -DMISSING_FILE=${CMAKE_CURRENT_BINARY_DIR}/missing-input.txt
+        -DVALID_FILE=${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_continues_after_error.cmake
+)
